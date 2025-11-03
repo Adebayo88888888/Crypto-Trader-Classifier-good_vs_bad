@@ -1,13 +1,15 @@
 ## 🧩 Project Pipeline  
 
-```mermaid
-flowchart LR
-    A[Dune Analytics API] -->|Export CSV| B["Data Preprocessing & EDA (Jupyter Notebook)"]
-    B --> C[Model Training (Logistic Regression)]
-    C --> D[Model Serialization (good_bad_trader_log_reg.bin)]
-    D --> E[FastAPI Service (predict_service.py)]
-    E --> F[Containerization (Dockerfile + Pipenv)]
-    F --> G[AWS Elastic Beanstalk Deployment]
+ ```mermaid
+flowchart TD
+    A["Data Source (Dune API)"] --> B["Data Extraction (CSV Export)"]
+    B --> C["Preprocessing & EDA (Jupyter Notebook)"]
+    C --> D["Feature Engineering (Numerical + Categorical Variables)"]
+    D --> E["Model Training (Logistic Regression)"]
+    E --> F["Model Serialization (Pickle)"]
+    F --> G["Deployment via Docker"]
+    G --> H["Hosting on AWS Elastic Beanstalk"]
+
 
     style A fill:#fdf5e6,stroke:#d4a017,stroke-width:2px
     style B fill:#e6f3ff,stroke:#0077cc,stroke-width:2px
