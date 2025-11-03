@@ -1,0 +1,144 @@
+with eth as (
+
+    with raw_data as (
+    select json_parse(http_get('https://api.dexscreener.com/latest/dex/pairs/ethereum/0x00b9edc1583bf6ef09ff3a09f6c23ecb57fd7d0bb75625717ec81eed181e22d7')) as json_data
+    ),
+    pair_data as (
+        select
+            json_extract_scalar(json_data, '$.pair.priceUsd') as price_usd
+        from raw_data
+    )
+    select 
+        cast(price_usd as double) as price_usd
+    from pair_data
+
+
+),
+
+tx_data as (
+
+  select
+    "from" as wallet,
+    date_trunc('week', block_time) as tx_week,
+    count(*) as tx_count,
+    sum(value / 1e18) * (select price_usd from eth) as total_volume
+
+  from ethereum.transactions
+  where 1=1
+      and block_time >= now() - interval '365' day --- last 1 year
+  group by 1, 2
+  having count(*) > 0
+  
+),
+
+data as (
+
+    select
+      wallet,
+      sum(tx_count) as tx_count_365d,
+      sum(total_volume) as total_volume,
+      count(distinct tx_week) as active_weeks
+    from tx_data
+    group by wallet
+    having sum(total_volume) > 0
+
+)
+,
+
+min_median_avg_metrics as (
+
+  select
+  
+    min(tx_count_365d) as min_tx_count,
+    approx_percentile(tx_count_365d, 0.5) as median_tx_count,
+    avg(tx_count_365d) as avg_tx_count,
+
+    min(total_volume) as min_total_volume,
+    approx_percentile(total_volume, 0.5) as median_total_volume,
+    avg(total_volume) as avg_total_volume,
+
+    min(active_weeks) as min_active_weeks,
+    approx_percentile(active_weeks, 0.5) as median_active_weeks,
+    avg(active_weeks) as avg_active_weeks
+  
+ from data    
+
+),
+
+full_data as (
+
+    select 
+        *,
+
+        case when tx_count_365d between (select min_tx_count from min_median_avg_metrics) and (select median_tx_count from min_median_avg_metrics)
+                     then '🐣 Occasional User'
+             when tx_count_365d between (select median_tx_count from min_median_avg_metrics) and (select avg_tx_count from min_median_avg_metrics)
+                     then '🐤 Regular User'
+             when tx_count_365d > (select avg_tx_count from min_median_avg_metrics)
+                     then '🐦 Frequent User'
+            else '-'
+        end as trader_activity_status,
+
+        
+        case when total_volume between (select min_total_volume from min_median_avg_metrics) and (select median_total_volume from min_median_avg_metrics)
+                     then '🦐 Low Value Trader'
+             when total_volume between (select median_total_volume from min_median_avg_metrics) and (select avg_total_volume from min_median_avg_metrics)
+                     then '🐟 Middle Value Trader'
+             when total_volume > (select avg_total_volume from min_median_avg_metrics)
+                     then '🐳 High Value Trader'
+            else '-'
+        end as trader_volume_status,
+
+             
+         case when active_weeks between (select min_active_weeks from min_median_avg_metrics) and (select median_active_weeks from min_median_avg_metrics)
+                     then '🐣 Unserious'
+             when active_weeks between (select median_active_weeks from min_median_avg_metrics) and (select avg_active_weeks from min_median_avg_metrics)
+                     then '🐤 Just there'
+             when active_weeks > (select avg_active_weeks from min_median_avg_metrics)
+                     then '🐦 OG'
+            else '-'
+        end as trader_weekly_frequency_status
+        
+    from data
+
+),
+
+final0 as (
+
+    select 
+        *,
+        case 
+        when 
+            (
+                trader_activity_status in ('🐤 Regular User', '🐦 Frequent User') and 
+                trader_volume_status in ('🐟 Middle Value Trader', '🐳 High Value Trader') and 
+                trader_weekly_frequency_status in ('🐤 Just there', '🐦 OG')
+            )
+            then '🟢 Good Trader'
+        else '🔴 Bad Trader'
+    end as target_variable
+    from full_data
+-- order by total_volume desc
+
+),
+
+full_data2 as (
+
+    select 
+        *,
+        row_number() over (partition by target_variable) as rn
+    from final0
+
+)
+
+select 
+    wallet,
+    tx_count_365d,
+    total_volume,
+    active_weeks,
+    trader_activity_status,
+    trader_volume_status,
+    trader_weekly_frequency_status,
+    target_variable
+from full_data2
+where rn <=5000 ----- 10000 random wallets
