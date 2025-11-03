@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart LR
-    A[Dune Analytics API] -->|Export CSV| B[Data Preprocessing & EDA (Jupyter Notebook)]
+    A[Dune Analytics API] -->|Export CSV| B["Data Preprocessing & EDA (Jupyter Notebook)"]
     B --> C[Model Training (Logistic Regression)]
     C --> D[Model Serialization (good_bad_trader_log_reg.bin)]
     D --> E[FastAPI Service (predict_service.py)]
