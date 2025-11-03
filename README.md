@@ -52,15 +52,11 @@ From the Jupyter Notebook (good_bad_trader_train.ipynb), several important behav
 
 High Mutual Information:
 
-trader_volume_status (≈ 0.362) and
-
-trader_weekly_frequency_status (≈ 0.334)
-are both highly informative predictors of trader quality.
+trader_volume_status (≈ 0.362) and trader_weekly_frequency_status (≈ 0.334) are both highly informative predictors of trader quality.
 
 Consistency Matters:
 
-active_weeks shows moderate positive correlation (≈ 0.489) with trader quality.
-Persistent activity across many weeks is a strong signal of good trading behavior.
+active_weeks shows moderate positive correlation (≈ 0.489) with trader quality.  Persistent activity across many weeks is a strong signal of good trading behavior.
 
 Raw Volume ≠ Goodness:
 
@@ -81,11 +77,15 @@ total_volume shows almost no linear correlation (≈ 0.026) with being a good tr
 
 ### 🧱 Deployment Workflow
 ---
+
 1. Model Serialization: The trained model (good_bad_trader_log_reg.bin) and DictVectorizer were serialized using Python’s pickle library for deployment.
 2. API Service: A FastAPI service (predict_service.py) was built to serve real-time predictions via a REST API endpoint: POST /predict
 
+
+
 ### 🐳 Containerization
 ---
+
 A lightweight Docker image was built using Python 3.12-slim and pipenv for environment management.
 
 To build and run locally:
@@ -97,8 +97,10 @@ The Docker image was deployed to AWS Elastic Beanstalk, leveraging a single-cont
 Once deployed, predictions can be made via:
  python3 predict_test.py
 
+
 💻 Tech Stack
 ---
+
 * Data Source: Dune Analytics API
 
 * Libraries: pandas, scikit-learn, matplotlib, seaborn, fastapi
@@ -113,6 +115,7 @@ Once deployed, predictions can be made via:
 
 # Conclusion
 ---
+
 This project demonstrates an end-to-end ML workflow from on-chain data acquisition to deployed prediction API for identifying valuable traders in decentralized ecosystems.
 
 By quantifying behavioral quality, we can move toward data-driven retention, fair incentives, and smarter ecosystem growth.
