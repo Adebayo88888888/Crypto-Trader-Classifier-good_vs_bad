@@ -10,14 +10,6 @@ flowchart TD
     F --> G["Deployment via Docker"]
     G --> H["Hosting on AWS Elastic Beanstalk"]
 
-
-    style A fill:#fdf5e6,stroke:#d4a017,stroke-width:2px
-    style B fill:#e6f3ff,stroke:#0077cc,stroke-width:2px
-    style C fill:#e8ffe6,stroke:#33aa33,stroke-width:2px
-    style D fill:#fff6e6,stroke:#ffb733,stroke-width:2px
-    style E fill:#f0e6ff,stroke:#7b68ee,stroke-width:2px
-    style F fill:#fff0f5,stroke:#cc3366,stroke-width:2px
-    style G fill:#e6fff9,stroke:#00b386,stroke-width:2px
 ```
 
 # Crypto-Trader-Classifier-good_vs_bad
