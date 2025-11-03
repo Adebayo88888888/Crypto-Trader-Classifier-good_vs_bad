@@ -1,12 +1,14 @@
+## 🧩 Project Pipeline  
+
 ```mermaid
 flowchart LR
-    A[Dune Analytics API] -->|Export CSV| B[Data Preprocessing & EDA<br>(Jupyter Notebook)]
-    B --> C[Model Training<br>(Logistic Regression)]
-    C --> D[Model Serialization<br>(good_bad_trader_log_reg.bin)]
-    D --> E[FastAPI Service<br>(predict_service.py)]
-    E --> F[Containerization<br>(Dockerfile + Pipenv)]
-    F --> G[AWS Elastic Beanstalk<br>(Deployed API Endpoint)]
-    
+    A[Dune Analytics API] -->|Export CSV| B[Data Preprocessing & EDA (Jupyter Notebook)]
+    B --> C[Model Training (Logistic Regression)]
+    C --> D[Model Serialization (good_bad_trader_log_reg.bin)]
+    D --> E[FastAPI Service (predict_service.py)]
+    E --> F[Containerization (Dockerfile + Pipenv)]
+    F --> G[AWS Elastic Beanstalk Deployment]
+
     style A fill:#fdf5e6,stroke:#d4a017,stroke-width:2px
     style B fill:#e6f3ff,stroke:#0077cc,stroke-width:2px
     style C fill:#e8ffe6,stroke:#33aa33,stroke-width:2px
@@ -14,6 +16,7 @@ flowchart LR
     style E fill:#f0e6ff,stroke:#7b68ee,stroke-width:2px
     style F fill:#fff0f5,stroke:#cc3366,stroke-width:2px
     style G fill:#e6fff9,stroke:#00b386,stroke-width:2px
+```
 
 # Crypto-Trader-Classifier-good_vs_bad
 
@@ -36,7 +39,7 @@ The goal of this project is to build a machine learning model that can predict w
 
 
 🧩 Data Source
-
+---
 The dataset originates from Dune Analytics, queried through its API and exported to CSV for offline analysis.
 Each row represents an individual wallet address, with associated behavioral features that describe activity, engagement, and trading frequency.
 | Feature Type | Column                           | Description                                       |
