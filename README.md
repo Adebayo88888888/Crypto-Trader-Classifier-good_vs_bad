@@ -14,9 +14,8 @@ flowchart TD
 
 # Crypto-Trader-Classifier-good_vs_bad
 
-##### A Machine Learning Pipeline for Understanding Trader Quality and Engagement Behavior Using Dune Analytics Data
 
-Problem Statement:
+### Problem Statement:
 
 In decentralized trading ecosystems, founders, projects, and platforms often struggle to distinguish between profitable (good) and unprofitable (bad) traders.
 Understanding trader quality is crucial for:
@@ -32,7 +31,7 @@ Understanding trader quality is crucial for:
 The goal of this project is to build a machine learning model that can predict whether a trader is likely to be “good” (profitable, consistent, active) based on their on-chain activity features.
 
 
-🧩 Data Source
+### 🧩 Data Source
 ---
 The dataset originates from Dune Analytics, queried through its API and exported to CSV for offline analysis.
 Each row represents an individual wallet address, with associated behavioral features that describe activity, engagement, and trading frequency.
@@ -46,7 +45,8 @@ Each row represents an individual wallet address, with associated behavioral fea
 | Target       | `good_trader`                    | Binary indicator: 1 = good trader, 0 = bad trader |
 
 
-🔍 Summary from Exploratory Data Analysis (EDA)
+### 🔍 Summary from Exploratory Data Analysis (EDA)
+---
 
 From the Jupyter Notebook (good_bad_trader_train.ipynb), several important behavioral insights emerged:
 
@@ -66,7 +66,9 @@ Raw Volume ≠ Goodness:
 
 total_volume shows almost no linear correlation (≈ 0.026) with being a good trader — suggesting the relationship is nonlinear (moderate traders can outperform extreme-volume ones).
 
-Interpretation and Implications
+
+### 🧠 Interpretation and Implications
+---
 
 | Stakeholder                 | Implication                                                                                                         |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -77,4 +79,41 @@ Interpretation and Implications
 
 
 
+### 🧱 Deployment Workflow
+---
+1. Model Serialization: The trained model (good_bad_trader_log_reg.bin) and DictVectorizer were serialized using Python’s pickle library for deployment.
+2. API Service: A FastAPI service (predict_service.py) was built to serve real-time predictions via a REST API endpoint: POST /predict
+
+### 🐳 Containerization
+---
+A lightweight Docker image was built using Python 3.12-slim and pipenv for environment management.
+
+To build and run locally:
+ docker build -t good_bad_trader .
+ docker run -p 8000:8000 good_bad_trader
+
+### ☁️ Deployment to AWS Elastic Beanstalk
+The Docker image was deployed to AWS Elastic Beanstalk, leveraging a single-container environment for scalable serving.
+Once deployed, predictions can be made via:
+ python3 predict_test.py
+
+💻 Tech Stack
+---
+* Data Source: Dune Analytics API
+
+* Libraries: pandas, scikit-learn, matplotlib, seaborn, fastapi
+
+* Virtual environment: pipenv
+
+* Containerization: Docker
+
+* Cloud deployment: AWS Elastic Beanstalk
+
+
+
+# Conclusion
+---
+This project demonstrates an end-to-end ML workflow from on-chain data acquisition to deployed prediction API for identifying valuable traders in decentralized ecosystems.
+
+By quantifying behavioral quality, we can move toward data-driven retention, fair incentives, and smarter ecosystem growth.
 
